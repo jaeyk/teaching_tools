@@ -51,6 +51,10 @@ function parseBreakoutRoster(text) {
   return dataRows.filter(Boolean);
 }
 
+function parsePeerRoster(text) {
+  return parseBreakoutRoster(text);
+}
+
 function renderList(list) {
   if (!list.length) {
     return "No eligible students found.";
@@ -193,6 +197,34 @@ function handleMakeGroups() {
   }
 }
 
+function handlePeerMatches() {
+  const namesText = document.getElementById("peerNames").value;
+  const seed = normalizeSeed(document.getElementById("peerSeed").value);
+  const output = document.getElementById("peerResult");
+
+  const names = parsePeerRoster(namesText);
+  if (names.length < 2) {
+    output.textContent = "Upload at least two participants to create matches.";
+    updateDownloadLink("peerDownload", "", "");
+    return;
+  }
+
+  const shuffled = seededShuffle(names, seed);
+  const matches = shuffled.map((reviewer, index) => ({
+    reviewer,
+    reviewee: shuffled[(index + 1) % shuffled.length],
+  }));
+
+  const list = matches
+    .map((pair) => `<li><strong>${pair.reviewer}</strong> reviews ${pair.reviewee}</li>`)
+    .join("");
+  output.innerHTML = `<ul class="group-list">${list}</ul>`;
+
+  const csvRows = matches.map((pair) => [pair.reviewer, pair.reviewee].join(","));
+  const withHeader = ["reviewer,reviewee", ...csvRows].join("\n");
+  updateDownloadLink("peerDownload", withHeader, "peer_review_matches.csv");
+}
+
 async function handleRosterUpload(event) {
   const [file] = event.target.files;
   if (!file) return;
@@ -219,10 +251,25 @@ async function handleGroupUpload(event) {
   }
 }
 
+async function handlePeerUpload(event) {
+  const [file] = event.target.files;
+  if (!file) return;
+  try {
+    const text = await readFileText(file);
+    document.getElementById("peerNames").value = text.trim();
+    document.getElementById("peerResult").textContent = "";
+    updateDownloadLink("peerDownload", "", "");
+  } catch (error) {
+    document.getElementById("peerResult").textContent = error.message;
+  }
+}
+
 document.getElementById("runColdCall").addEventListener("click", handleColdCall);
 document.getElementById("makeGroups").addEventListener("click", handleMakeGroups);
+document.getElementById("makePeerMatches").addEventListener("click", handlePeerMatches);
 document.getElementById("coldCallUpload").addEventListener("change", handleRosterUpload);
 document.getElementById("groupUpload").addEventListener("change", handleGroupUpload);
+document.getElementById("peerUpload").addEventListener("change", handlePeerUpload);
 
 function setupTabs() {
   const tabButtons = Array.from(document.querySelectorAll("[role='tab']"));
