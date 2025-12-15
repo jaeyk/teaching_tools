@@ -39,6 +39,43 @@ expects two columns (`name`, `excused`), while breakout grouping accepts a
 single column of names. Each click creates a new shuffle unless you supply a
 seed.
 
+### Sample data for quick testing
+
+The browser UI and uploads both ship with a 24-student fake roster so you can
+try the tools immediately:
+
+- `docs/sample_cold_call_roster.csv` contains `name,excused` columns.
+- `docs/sample_breakout_names.csv` lists the same names in a single column.
+
+The list is also prefilled in the browser textareas:
+
+```
+Avery, false
+Bianca, false
+Caleb, true
+Darius, false
+Elena, false
+Fatima, true
+Gavin, false
+Harper, false
+Imani, false
+Jasper, true
+Kira, false
+Luca, false
+Maya, false
+Nico, true
+Omar, false
+Priya, false
+Quinn, false
+Rosa, false
+Soren, false
+Talia, true
+Uriel, false
+Valerie, false
+Wes, false
+Yara, false
+```
+
 ### Publishing to GitHub Pages
 
 1. In your GitHub repository, open **Settings > Pages** (requires repo admin

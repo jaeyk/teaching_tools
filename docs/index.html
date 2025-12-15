@@ -30,23 +30,40 @@
           <div class="card__body">
             <label class="field">
               <span>Roster (name, excused)</span>
-              <textarea id="coldCallRoster" rows="6">
-Alex, false
-Bao, true
-Carmen, false
-DeShawn, false
-Ella, true
-Fiona, false
-Gus, false
-Harper, true
-Inez, false
-Jamal, false
+              <textarea id="coldCallRoster" rows="12">
+Avery, false
+Bianca, false
+Caleb, true
+Darius, false
+Elena, false
+Fatima, true
+Gavin, false
+Harper, false
+Imani, false
+Jasper, true
+Kira, false
+Luca, false
+Maya, false
+Nico, true
+Omar, false
+Priya, false
+Quinn, false
+Rosa, false
+Soren, false
+Talia, true
+Uriel, false
+Valerie, false
+Wes, false
+Yara, false
               </textarea>
             </label>
             <label class="field">
               <span>Upload roster (.csv or .txt)</span>
               <input type="file" id="coldCallUpload" accept=".csv,.txt,text/csv,text/plain" />
-              <small>Two columns: name, excused (true/false)</small>
+              <small>
+                Two columns: name, excused (true/false).
+                <a href="sample_cold_call_roster.csv" download>Download a sample roster</a>.
+              </small>
             </label>
             <div class="field-group">
               <label class="field">
@@ -77,38 +94,40 @@ Jamal, false
           <div class="card__body">
             <label class="field">
               <span>Names (one per line)</span>
-              <textarea id="groupNames" rows="6">
-Alex
-Bao
-Carmen
-DeShawn
-Ella
-Fiona
-Gus
+              <textarea id="groupNames" rows="12">
+Avery
+Bianca
+Caleb
+Darius
+Elena
+Fatima
+Gavin
 Harper
-Inez
-Jamal
-Kayla
-Luis
-Mara
-Noor
-Oscar
+Imani
+Jasper
+Kira
+Luca
+Maya
+Nico
+Omar
 Priya
 Quinn
-Ravi
-Sofia
-Tariq
-Uma
-Vera
-Wendy
+Rosa
+Soren
+Talia
+Uriel
+Valerie
+Wes
 Yara
-Zeke
               </textarea>
             </label>
             <label class="field">
               <span>Upload roster (.csv or .txt)</span>
               <input type="file" id="groupUpload" accept=".csv,.txt,text/csv,text/plain" />
-              <small>Single column of names, one per line.</small>
+              <small>
+                Single column of names, one per line.
+                <a href="sample_breakout_names.csv" download>Download sample names</a>.
+              </small>
             </label>
             <div class="field-group">
               <label class="field">
