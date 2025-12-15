@@ -1,5 +1,7 @@
 # ClassKit (teaching_tools)
 
+Developed by Jae Yeon Kim using OpenAI's Codex.
+
 ClassKit is a lightweight collection of classroom utilities:
 
 - **Cold calling helper**: randomizes student selection while respecting opt-out
