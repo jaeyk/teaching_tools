@@ -42,9 +42,6 @@ Python. The landing tab explains the tools; switch to **Cold calls** or
 building cold calls or groups. Each click creates a new shuffle unless you
 supply a seed.
 
-Development note: The browser experience and underlying utilities were
-developed by Jae Yeon Kim using OpenAI's Codex.
-
 ### Sample data for quick testing
 
 The browser UI ships with sample downloads so you can try the tools
