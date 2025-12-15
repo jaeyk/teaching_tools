@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teaching Tools</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div class="hero__text">
+          <p class="eyebrow">Lightweight teaching tools</p>
+          <h1>Run cold calls and breakout groups right in the browser.</h1>
+          <p class="lede">
+            Upload your roster, pick a few options, and get a reproducible set of
+            student names or groups. Everything runs locally—no servers or
+            sign-ins required.
+          </p>
+        </div>
+      </header>
+
+      <nav class="tabs" aria-label="Teaching tools">
+        <button class="tab tab--active" role="tab" aria-selected="true" aria-controls="tab-overview" id="tab-overview-trigger">Overview</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="tab-cold" id="tab-cold-trigger">Cold calls</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="tab-breakout" id="tab-breakout-trigger">Breakout groups</button>
+      </nav>
+
+      <section class="tab-panel" id="tab-overview" role="tabpanel" aria-labelledby="tab-overview-trigger">
+        <div class="card card--full">
+          <div class="card__header">
+            <h2>Choose a tool</h2>
+            <p>Pick the tab that fits your classroom moment. Uploads stay in your browser.</p>
+          </div>
+          <div class="overview-grid">
+            <article class="pill">
+              <h3>Cold calling</h3>
+              <p>Upload a two-column roster (<code>name,excused</code>) to sample students while honoring opt-outs. Each click reshuffles unless you supply an optional seed.</p>
+              <a class="pill__link" href="sample_cold_call_roster.csv" download>Download sample roster</a>
+            </article>
+            <article class="pill">
+              <h3>Breakout groups</h3>
+              <p>Use the same roster format to split students into balanced teams by target group size or number of teams. Excused students are skipped automatically.</p>
+              <a class="pill__link" href="sample_breakout_names.csv" download>Download sample roster</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel tab-panel--hidden" id="tab-cold" role="tabpanel" aria-labelledby="tab-cold-trigger">
+        <article class="card">
+          <div class="card__header">
+            <h2>Cold calling</h2>
+            <p>Select a random set of students while respecting opt-out preferences.</p>
+          </div>
+          <div class="card__body">
+            <label class="field">
+              <span>Uploaded roster preview (name, excused)</span>
+              <textarea id="coldCallRoster" rows="8" placeholder="Upload a CSV or TXT roster to preview it" readonly></textarea>
+            </label>
+            <label class="field">
+              <span>Upload roster (.csv or .txt)</span>
+              <input type="file" id="coldCallUpload" accept=".csv,.txt,text/csv,text/plain" />
+              <small>
+                Two columns: name, excused (true/false).
+                <a href="sample_cold_call_roster.csv" download>Download a sample roster</a>.
+              </small>
+            </label>
+            <div class="field-group">
+              <label class="field">
+                <span>Sample size</span>
+                <input type="number" id="sampleSize" min="1" value="1" />
+              </label>
+              <label class="field">
+                <span>Seed (optional)</span>
+                <input type="number" id="coldCallSeed" placeholder="42" />
+                <small>Leave blank to generate a new random set each time.</small>
+              </label>
+            </div>
+            <label class="checkbox">
+              <input type="checkbox" id="includeExcused" />
+              <span>Include excused students</span>
+            </label>
+            <button id="runColdCall">Generate names</button>
+            <a id="coldCallDownload" class="download download--hidden">Download CSV</a>
+            <output id="coldCallResult" aria-live="polite"></output>
+          </div>
+        </article>
+      </section>
+
+      <section class="tab-panel tab-panel--hidden" id="tab-breakout" role="tabpanel" aria-labelledby="tab-breakout-trigger">
+        <article class="card">
+          <div class="card__header">
+            <h2>Breakout groups</h2>
+            <p>Create balanced teams by group size or team count.</p>
+          </div>
+          <div class="card__body">
+            <label class="field">
+              <span>Uploaded roster preview (name, excused)</span>
+              <textarea id="groupNames" rows="8" placeholder="Upload a CSV or TXT roster to preview it" readonly></textarea>
+            </label>
+            <label class="field">
+              <span>Upload roster (.csv or .txt)</span>
+              <input type="file" id="groupUpload" accept=".csv,.txt,text/csv,text/plain" />
+              <small>
+                Two columns: name, excused (true/false). Same format as cold calling.
+                <a href="sample_breakout_names.csv" download>Download a sample roster</a>.
+              </small>
+            </label>
+            <div class="field-group">
+              <label class="field">
+                <span>Team count</span>
+                <input type="number" id="teamCount" min="1" placeholder="2" />
+              </label>
+              <label class="field">
+                <span>Group size</span>
+                <input type="number" id="groupSize" min="1" placeholder="3" />
+              </label>
+              <label class="field">
+                <span>Seed (optional)</span>
+                <input type="number" id="groupSeed" placeholder="7" />
+                <small>Leave blank for a fresh shuffle on every click.</small>
+              </label>
+            </div>
+            <button id="makeGroups">Create groups</button>
+            <a id="groupDownload" class="download download--hidden">Download CSV</a>
+            <output id="groupResult" aria-live="polite"></output>
+          </div>
+        </article>
+      </section>
+      <footer class="footer">
+        Developed by Jae Yeon Kim using OpenAI's Codex.
+      </footer>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
