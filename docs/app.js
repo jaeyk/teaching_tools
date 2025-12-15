@@ -213,3 +213,22 @@ document.getElementById("runColdCall").addEventListener("click", handleColdCall)
 document.getElementById("makeGroups").addEventListener("click", handleMakeGroups);
 document.getElementById("coldCallUpload").addEventListener("change", handleRosterUpload);
 document.getElementById("groupUpload").addEventListener("change", handleGroupUpload);
+
+function setupTabs() {
+  const tabButtons = document.querySelectorAll("[role='tab']");
+
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      tabButtons.forEach((other) => {
+        const isActive = other === button;
+        other.classList.toggle("tab--active", isActive);
+        other.setAttribute("aria-selected", String(isActive));
+        document
+          .getElementById(other.getAttribute("aria-controls"))
+          .classList.toggle("tab-panel--hidden", !isActive);
+      });
+    });
+  });
+}
+
+setupTabs();

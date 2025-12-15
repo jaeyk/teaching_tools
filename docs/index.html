@@ -10,22 +10,48 @@
     <main class="page">
       <header class="hero">
         <div class="hero__text">
-          <p class="eyebrow">Classroom helpers</p>
-          <h1>Cold calls and breakout groups, right in your browser.</h1>
+          <p class="eyebrow">Lightweight teaching tools</p>
+          <h1>Run cold calls and breakout groups right in the browser.</h1>
           <p class="lede">
-            Upload your roster, pick a few options, and get a reproducible set
-            of student names or groups. Everything runs locally in the
-            browser—no servers required.
+            Upload your roster, pick a few options, and get a reproducible set of
+            student names or groups. Everything runs locally—no servers or
+            sign-ins required.
           </p>
         </div>
       </header>
 
-      <section class="card-grid">
+      <nav class="tabs" aria-label="Teaching tools">
+        <button class="tab tab--active" role="tab" aria-selected="true" aria-controls="tab-overview" id="tab-overview-trigger">Overview</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="tab-cold" id="tab-cold-trigger">Cold calls</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="tab-breakout" id="tab-breakout-trigger">Breakout groups</button>
+      </nav>
+
+      <section class="tab-panel" id="tab-overview" role="tabpanel" aria-labelledby="tab-overview-trigger">
+        <div class="card card--full">
+          <div class="card__header">
+            <h2>Choose a tool</h2>
+            <p>Pick the tab that fits your classroom moment. Uploads stay in your browser.</p>
+          </div>
+          <div class="overview-grid">
+            <article class="pill">
+              <h3>Cold calling</h3>
+              <p>Upload a two-column roster (<code>name,excused</code>) to sample students while honoring opt-outs. Each click reshuffles unless you supply an optional seed.</p>
+              <a class="pill__link" href="sample_cold_call_roster.csv" download>Download sample roster</a>
+            </article>
+            <article class="pill">
+              <h3>Breakout groups</h3>
+              <p>Use the same roster format to split students into balanced teams by target group size or number of teams. Excused students are skipped automatically.</p>
+              <a class="pill__link" href="sample_breakout_names.csv" download>Download sample roster</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel tab-panel--hidden" id="tab-cold" role="tabpanel" aria-labelledby="tab-cold-trigger">
         <article class="card">
           <div class="card__header">
             <h2>Cold calling</h2>
-            <p>Select a random set of students while respecting opt-out
-              preferences.</p>
+            <p>Select a random set of students while respecting opt-out preferences.</p>
           </div>
           <div class="card__body">
             <label class="field">
@@ -60,7 +86,9 @@
             <output id="coldCallResult" aria-live="polite"></output>
           </div>
         </article>
+      </section>
 
+      <section class="tab-panel tab-panel--hidden" id="tab-breakout" role="tabpanel" aria-labelledby="tab-breakout-trigger">
         <article class="card">
           <div class="card__header">
             <h2>Breakout groups</h2>
