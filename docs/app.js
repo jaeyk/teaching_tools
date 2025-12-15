@@ -36,6 +36,70 @@ function renderList(list) {
   return list.join("\n");
 }
 
+function readFileText(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event) => resolve(event.target.result);
+    reader.onerror = () => reject(new Error("Unable to read file."));
+    reader.readAsText(file);
+  });
+}
+
+function updateDownloadLink(anchorId, content, filename) {
+  const anchor = document.getElementById(anchorId);
+  if (!content) {
+    anchor.classList.add("download--hidden");
+    anchor.removeAttribute("href");
+    return;
+  }
+  const blob = new Blob([content], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.classList.remove("download--hidden");
+}
+
+const defaultColdCallRoster = [
+  "Alex, false",
+  "Bao, true",
+  "Carmen, false",
+  "DeShawn, false",
+  "Ella, true",
+  "Fiona, false",
+  "Gus, false",
+  "Harper, true",
+  "Inez, false",
+  "Jamal, false",
+].join("\n");
+
+const defaultGroupNames = [
+  "Alex",
+  "Bao",
+  "Carmen",
+  "DeShawn",
+  "Ella",
+  "Fiona",
+  "Gus",
+  "Harper",
+  "Inez",
+  "Jamal",
+  "Kayla",
+  "Luis",
+  "Mara",
+  "Noor",
+  "Oscar",
+  "Priya",
+  "Quinn",
+  "Ravi",
+  "Sofia",
+  "Tariq",
+  "Uma",
+  "Vera",
+  "Wendy",
+  "Yara",
+  "Zeke",
+].join("\n");
+
 function handleColdCall() {
   const rosterText = document.getElementById("coldCallRoster").value;
   const sampleSize = Number(document.getElementById("sampleSize").value || "1");
@@ -45,6 +109,7 @@ function handleColdCall() {
 
   if (!Number.isFinite(sampleSize) || sampleSize < 1) {
     output.textContent = "Sample size must be at least 1.";
+    updateDownloadLink("coldCallDownload", "", "");
     return;
   }
 
@@ -52,12 +117,16 @@ function handleColdCall() {
   const eligible = roster.filter((row) => includeExcused || !row.excused).map((row) => row.name);
   if (!eligible.length) {
     output.textContent = "No eligible students found.";
+    updateDownloadLink("coldCallDownload", "", "");
     return;
   }
 
   const shuffled = seededShuffle(eligible, seed);
   const sample = shuffled.slice(0, Math.min(sampleSize, eligible.length));
   output.textContent = renderList(sample);
+
+  const csv = ["name", ...sample].join("\n");
+  updateDownloadLink("coldCallDownload", csv, "cold_call_selection.csv");
 }
 
 function calculateTeamCount(nameCount, teamCount, groupSize) {
@@ -107,6 +176,7 @@ function handleMakeGroups() {
     const groupsNeeded = calculateTeamCount(names.length, teamCountValue, groupSizeValue);
     if (groupsNeeded === 0) {
       output.textContent = "No groups to create.";
+      updateDownloadLink("groupDownload", "", "");
       return;
     }
     const shuffled = seededShuffle(names, seed);
@@ -125,10 +195,43 @@ function handleMakeGroups() {
       .map((group, index) => `<li><strong>Group ${index + 1}:</strong> ${group.join(", ")}</li>`)
       .join("");
     output.innerHTML = `<ul class="group-list">${list}</ul>`;
+
+    const csv = groups
+      .map((group, index) => [group.map((name) => `"${name}"`).join(","), `Group ${index + 1}`].join(","))
+      .join("\n");
+    const withHeader = ["name,group", csv].filter(Boolean).join("\n");
+    updateDownloadLink("groupDownload", withHeader, "breakout_groups.csv");
   } catch (error) {
     output.textContent = error.message;
+    updateDownloadLink("groupDownload", "", "");
   }
 }
 
+async function handleRosterUpload(event) {
+  const [file] = event.target.files;
+  if (!file) return;
+  try {
+    const text = await readFileText(file);
+    document.getElementById("coldCallRoster").value = text.trim();
+  } catch (error) {
+    document.getElementById("coldCallResult").textContent = error.message;
+  }
+}
+
+async function handleGroupUpload(event) {
+  const [file] = event.target.files;
+  if (!file) return;
+  try {
+    const text = await readFileText(file);
+    document.getElementById("groupNames").value = text.trim();
+  } catch (error) {
+    document.getElementById("groupResult").textContent = error.message;
+  }
+}
+
+document.getElementById("coldCallRoster").value = defaultColdCallRoster;
+document.getElementById("groupNames").value = defaultGroupNames;
 document.getElementById("runColdCall").addEventListener("click", handleColdCall);
 document.getElementById("makeGroups").addEventListener("click", handleMakeGroups);
+document.getElementById("coldCallUpload").addEventListener("change", handleRosterUpload);
+document.getElementById("groupUpload").addEventListener("change", handleGroupUpload);

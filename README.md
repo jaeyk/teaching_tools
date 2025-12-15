@@ -34,16 +34,25 @@ make_breakout_groups(names, team_count=2, random_state=7)
 A lightweight web UI lives in `docs/` so it can be published with GitHub
 Pages. Open `docs/index.html` locally or configure Pages to serve from the
 `docs` directory to try the cold calling and breakout tools without installing
-Python.
+Python. You can paste rosters directly or upload CSV/text files—cold calling
+expects two columns (`name`, `excused`), while breakout grouping accepts a
+single column of names. Each click creates a new shuffle unless you supply a
+seed.
 
 ### Publishing to GitHub Pages
 
-1. In your GitHub repository, open **Settings > Pages**.
+1. In your GitHub repository, open **Settings > Pages** (requires repo admin
+   access).
 2. Select **Deploy from a branch** and choose `main` (or your default branch)
    with `/docs` as the root folder.
 3. Save. After a minute or two, Pages will publish at
    `https://<your-username>.github.io/<repo-name>/` (for example,
    `https://octocat.github.io/teaching_tools/`).
+
+**Troubleshooting:** If you see a 404 when visiting the Settings page, you
+likely don’t have permission to manage Pages on that repository. Fork the repo
+to your own account (or ask a maintainer to enable Pages) and repeat the steps
+above from your fork at `https://github.com/<your-username>/<repo-name>/`.
 
 Once published, share the Pages URL so anyone can load the web UI directly in a
 browser—no additional deployment steps are required.
