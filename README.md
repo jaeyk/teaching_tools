@@ -1,7 +1,5 @@
 # teaching_tools
 
-Developed by Jae Yeon Kim using OpenAI's Codex
-
 A lightweight collection of classroom utilities:
 
 - **Cold calling helper**: randomizes student selection while respecting opt-out
@@ -48,8 +46,8 @@ The browser UI ships with sample downloads so you can try the tools
 immediately:
 
 - `docs/sample_cold_call_roster.csv` contains `name,excused` columns.
-- `docs/sample_breakout_names.csv` provides the same roster in the identical
-  two-column format for group creation.
+- `docs/sample_breakout_names.csv` lists the same students in a single `name`
+  column for group creation.
 
 ### Publishing to GitHub Pages
 

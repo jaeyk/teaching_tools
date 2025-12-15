@@ -40,6 +40,17 @@ function parseRoster(text) {
     .filter((entry) => entry.name);
 }
 
+function parseBreakoutRoster(text) {
+  const rows = text
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const [, ...dataRows] = rows; // ignore the first row (header)
+
+  return dataRows.filter(Boolean);
+}
+
 function renderList(list) {
   if (!list.length) {
     return "No eligible students found.";
@@ -135,8 +146,7 @@ function handleMakeGroups() {
   const seed = normalizeSeed(document.getElementById("groupSeed").value);
   const output = document.getElementById("groupResult");
 
-  const roster = parseRoster(namesText);
-  const names = roster.filter((row) => !row.excused).map((row) => row.name);
+  const names = parseBreakoutRoster(namesText);
 
   if (!names.length) {
     output.textContent = "Upload a roster file to create groups.";
@@ -220,7 +230,7 @@ function setupTabs() {
     tabButtons.map((button) => [button, document.getElementById(button.getAttribute("aria-controls"))])
   );
 
-  function activateTab(target) {
+  function activateTab(target, { scroll = false } = {}) {
     tabButtons.forEach((button) => {
       const isActive = button === target;
       button.classList.toggle("tab--active", isActive);
@@ -228,16 +238,19 @@ function setupTabs() {
       const panel = panels.get(button);
       if (panel) {
         panel.classList.toggle("tab-panel--hidden", !isActive);
+        if (isActive && scroll) {
+          panel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       }
     });
   }
 
   tabButtons.forEach((button) => {
-    button.addEventListener("click", () => activateTab(button));
+    button.addEventListener("click", () => activateTab(button, { scroll: true }));
     button.addEventListener("keydown", (event) => {
       if (event.key === " " || event.key === "Enter") {
         event.preventDefault();
-        activateTab(button);
+        activateTab(button, { scroll: true });
       }
     });
   });
