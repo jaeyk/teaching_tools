@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teaching Tools</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div class="hero__text">
+          <p class="eyebrow">Classroom helpers</p>
+          <h1>Cold calls and breakout groups, right in your browser.</h1>
+          <p class="lede">
+            Paste your roster, pick a few options, and get a reproducible set of
+            student names or groups. Everything runs locally in the browser—no
+            servers required.
+          </p>
+        </div>
+      </header>
+
+      <section class="card-grid">
+        <article class="card">
+          <div class="card__header">
+            <h2>Cold calling</h2>
+            <p>Select a random set of students while respecting opt-out
+              preferences.</p>
+          </div>
+          <div class="card__body">
+            <label class="field">
+              <span>Roster (name, excused)</span>
+              <textarea id="coldCallRoster" rows="6">
+Alex, false
+Bao, true
+Carmen, false
+DeShawn, false
+Ella, true
+Fiona, false
+Gus, false
+Harper, true
+Inez, false
+Jamal, false
+              </textarea>
+            </label>
+            <div class="field-group">
+              <label class="field">
+                <span>Sample size</span>
+                <input type="number" id="sampleSize" min="1" value="1" />
+              </label>
+              <label class="field">
+                <span>Seed (optional)</span>
+                <input type="number" id="coldCallSeed" placeholder="42" />
+              </label>
+            </div>
+            <label class="checkbox">
+              <input type="checkbox" id="includeExcused" />
+              <span>Include excused students</span>
+            </label>
+            <button id="runColdCall">Generate names</button>
+            <output id="coldCallResult" aria-live="polite"></output>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card__header">
+            <h2>Breakout groups</h2>
+            <p>Create balanced teams by group size or team count.</p>
+          </div>
+          <div class="card__body">
+            <label class="field">
+              <span>Names (one per line)</span>
+              <textarea id="groupNames" rows="6">
+Alex
+Bao
+Carmen
+DeShawn
+Ella
+Fiona
+Gus
+Harper
+Inez
+Jamal
+Kayla
+Luis
+Mara
+Noor
+Oscar
+Priya
+Quinn
+Ravi
+Sofia
+Tariq
+Uma
+Vera
+Wendy
+Yara
+Zeke
+              </textarea>
+            </label>
+            <div class="field-group">
+              <label class="field">
+                <span>Team count</span>
+                <input type="number" id="teamCount" min="1" placeholder="2" />
+              </label>
+              <label class="field">
+                <span>Group size</span>
+                <input type="number" id="groupSize" min="1" placeholder="3" />
+              </label>
+              <label class="field">
+                <span>Seed (optional)</span>
+                <input type="number" id="groupSeed" placeholder="7" />
+              </label>
+            </div>
+            <button id="makeGroups">Create groups</button>
+            <output id="groupResult" aria-live="polite"></output>
+          </div>
+        </article>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
