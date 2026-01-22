@@ -8,6 +8,8 @@ This suite currently includes:
   preferences.
 - **Breakout group creator**: shuffles a roster into balanced teams based on a
   desired team count or target group size.
+- **Project preference groups**: clusters students into project teams based on
+  the similarity of their stated topic preferences.
 - **Peer review matcher**: pairs individuals or groups for reciprocal review
   cycles.
 
@@ -19,7 +21,12 @@ working with pandas DataFrames, install pandas alongside the package.
 ## Usage
 
 ```python
-from teaching_tools import cold_call_candidates, make_breakout_groups, match_peer_reviews
+from teaching_tools import (
+    cold_call_candidates,
+    form_preference_groups,
+    make_breakout_groups,
+    match_peer_reviews,
+)
 
 # Cold calling
 roster = {"name": ["Alice", "Bob", "Carla", "Deepak"], "excused": [False, True, False, False]}
@@ -36,6 +43,18 @@ make_breakout_groups(names, team_count=2, random_state=7)
 participants = ["Team 1", "Team 2", "Team 3", "Team 4"]
 match_peer_reviews(participants, random_state=3)
 # [('Team 4', 'Team 1'), ('Team 1', 'Team 3'), ('Team 3', 'Team 2'), ('Team 2', 'Team 4')]
+
+# Project preference groups
+roster = {
+    "name": ["Student A", "Student B", "Student C"],
+    "preferences": [
+        "Health Policy, Bioethics, and Human Rights, Education and Labor Markets",
+        "Education and Labor Markets",
+        "Global Conflict and Cooperation",
+    ],
+}
+form_preference_groups(roster, group_size=2, random_state=11)
+# [['Student A', 'Student B'], ['Student C']]
 ```
 
 ## Run in your browser
