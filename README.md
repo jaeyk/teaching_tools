@@ -1,6 +1,6 @@
 # ClassKit 
 
-ClassKit is a lightweight suite of browser-based classroom utilities. Upload a roster, choose your options, and generate reproducible student samples, breakout groups, and peer-review matches. No installation required.
+ClassKit is a lightweight suite of browser-based classroom utilities. Upload a roster, choose your options, and generate reproducible student samples for cold calling, breakout groups, preference-based project teams, and peer-review matches. No installation required.
 
 This suite currently includes:
 
@@ -8,6 +8,8 @@ This suite currently includes:
   preferences.
 - **Breakout group creator**: shuffles a roster into balanced teams based on a
   desired team count or target group size.
+- **Project preference groups**: clusters students into project teams based on
+  the similarity of their stated topic preferences.
 - **Peer review matcher**: pairs individuals or groups for reciprocal review
   cycles.
 
@@ -19,7 +21,12 @@ working with pandas DataFrames, install pandas alongside the package.
 ## Usage
 
 ```python
-from teaching_tools import cold_call_candidates, make_breakout_groups, match_peer_reviews
+from teaching_tools import (
+    cold_call_candidates,
+    form_preference_groups,
+    make_breakout_groups,
+    match_peer_reviews,
+)
 
 # Cold calling
 roster = {"name": ["Alice", "Bob", "Carla", "Deepak"], "excused": [False, True, False, False]}
@@ -36,7 +43,39 @@ make_breakout_groups(names, team_count=2, random_state=7)
 participants = ["Team 1", "Team 2", "Team 3", "Team 4"]
 match_peer_reviews(participants, random_state=3)
 # [('Team 4', 'Team 1'), ('Team 1', 'Team 3'), ('Team 3', 'Team 2'), ('Team 2', 'Team 4')]
+
+# Project preference groups
+roster = {
+    "name": ["Student A", "Student B", "Student C"],
+    "preferences": [
+        "Health Policy, Bioethics, and Human Rights, Education and Labor Markets",
+        "Education and Labor Markets",
+        "Global Conflict and Cooperation",
+    ],
+}
+form_preference_groups(roster, group_size=2, random_state=11)
+# [['Student A', 'Student B'], ['Student C']]
 ```
+
+### Preference-based grouping logic
+
+The preference grouping utility uses a greedy similarity-based approach:
+
+1. Each student's preferences are parsed into a set of normalized topics using
+   the provided separators (comma by default).
+2. A Jaccard similarity score is computed between students based on overlapping
+   topics.
+3. Groups are formed by selecting a starting student and repeatedly adding the
+   remaining student with the highest average similarity to the current group
+   until the target group size is reached.
+
+This yields teams that are locally cohesive by shared interests while keeping
+group sizes balanced. For deterministic results, supply a random seed.
+
+**Jaccard similarity example:** If Student A lists topics
+{Health, Education, Environment} and Student B lists {Health, Environment},
+their Jaccard similarity is |{Health, Environment}| / |{Health, Education, Environment}|
+= 2 / 3 ≈ 0.67, indicating strong overlap.
 
 ## Run in your browser
 
@@ -62,6 +101,8 @@ immediately:
 - `docs/sample_cold_call_roster.csv` contains `name,excused` columns.
 - `docs/sample_breakout_names.csv` lists the same students in a single `name`
   column for group creation.
+- `docs/sample_project_preferences.csv` pairs student names with preference
+  strings for topic-based grouping.
 - `docs/sample_peer_review_names.csv` reuses the roster as a single `name`
   column for peer matching.
 
