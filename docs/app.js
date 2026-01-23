@@ -58,6 +58,62 @@ function parsePeerRoster(text) {
   return parseBreakoutRoster(text);
 }
 
+function parsePreferenceRoster(text) {
+  const rows = text
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (!rows.length) return [];
+
+  const [first, ...rest] = rows;
+  const hasHeader = /name/i.test(first) && /preference/i.test(first);
+  const dataRows = hasHeader ? rest : rows;
+
+  return dataRows
+    .map((line) => {
+      const separatorIndex = line.indexOf(",");
+      if (separatorIndex === -1) {
+        return { name: line.trim(), preferences: "" };
+      }
+      const name = line.slice(0, separatorIndex).trim();
+      const preferences = line.slice(separatorIndex + 1).trim();
+      return { name, preferences };
+    })
+    .filter((entry) => entry.name);
+}
+
+function parsePreferenceDelimiters(raw) {
+  const trimmed = (raw ?? "").toString().trim();
+  if (!trimmed) {
+    return [","];
+  }
+  return trimmed.split(/\s+/).filter(Boolean);
+}
+
+function parsePreferenceList(raw, delimiters) {
+  if (!raw.trim()) return [];
+  if (!delimiters.length) return [raw.trim().toLowerCase()];
+
+  const pattern = delimiters.map((delimiter) => delimiter.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  return raw
+    .split(new RegExp(pattern))
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => part.toLowerCase());
+}
+
+function jaccardSimilarity(left, right) {
+  if (!left.size && !right.size) return 0;
+  const union = new Set([...left, ...right]);
+  if (!union.size) return 0;
+  let intersectionCount = 0;
+  left.forEach((value) => {
+    if (right.has(value)) intersectionCount += 1;
+  });
+  return intersectionCount / union.size;
+}
+
 function renderList(list) {
   if (!list.length) {
     return "No eligible students found.";
@@ -233,6 +289,97 @@ function handlePeerMatches() {
   }
 }
 
+function handlePreferenceGroups() {
+  const rosterText = document.getElementById("preferenceRoster").value;
+  const teamCount = document.getElementById("preferenceTeamCount").value;
+  const groupSize = document.getElementById("preferenceGroupSize").value;
+  const seed = normalizeSeed(document.getElementById("preferenceSeed").value);
+  const delimiterInput = document.getElementById("preferenceDelimiters").value;
+  const output = document.getElementById("preferenceResult");
+
+  const roster = parsePreferenceRoster(rosterText);
+  if (!roster.length) {
+    output.textContent = "Upload a roster file to create preference groups.";
+    updateDownloadLink("preferenceDownload", "", "");
+    return;
+  }
+
+  const teamCountValue = teamCount === "" ? null : Number(teamCount);
+  const groupSizeValue = groupSize === "" ? null : Number(groupSize);
+  const delimiters = parsePreferenceDelimiters(delimiterInput);
+
+  try {
+    const groupsNeeded = calculateTeamCount(roster.length, teamCountValue, groupSizeValue);
+    if (groupsNeeded === 0) {
+      output.textContent = "No groups to create.";
+      updateDownloadLink("preferenceDownload", "", "");
+      return;
+    }
+
+    const students = roster.map((entry) => ({
+      name: entry.name,
+      preferences: new Set(parsePreferenceList(entry.preferences, delimiters)),
+    }));
+
+    const similarityMatrix = students.map((student, i) =>
+      students.map((other, j) => (i === j ? 1 : jaccardSimilarity(student.preferences, other.preferences)))
+    );
+
+    const baseSize = Math.floor(students.length / groupsNeeded);
+    const remainder = students.length % groupsNeeded;
+    const groupSizes = Array.from({ length: groupsNeeded }, (_, i) => (i < remainder ? baseSize + 1 : baseSize));
+
+    const remaining = seededShuffle(
+      students.map((_, index) => index),
+      seed
+    );
+
+    const groups = [];
+    for (const size of groupSizes) {
+      if (!remaining.length) break;
+      const anchor = remaining.shift();
+      const groupIndices = [anchor];
+
+      while (groupIndices.length < size && remaining.length) {
+        let bestIndex = remaining[0];
+        let bestScore = -1;
+        for (const candidate of remaining) {
+          const score =
+            groupIndices.reduce((sum, member) => sum + similarityMatrix[candidate][member], 0) /
+            groupIndices.length;
+          if (score > bestScore) {
+            bestScore = score;
+            bestIndex = candidate;
+          }
+        }
+        groupIndices.push(bestIndex);
+        remaining.splice(remaining.indexOf(bestIndex), 1);
+      }
+
+      groups.push(groupIndices.map((index) => students[index].name));
+    }
+
+    const rows = groups.flatMap((group, index) =>
+      group.map((name) => ({
+        name,
+        group: index + 1,
+      }))
+    );
+
+    const list = rows
+      .map((row) => `<li><strong>${row.name}</strong>: Group ${row.group}</li>`)
+      .join("");
+    output.innerHTML = `<ul class="group-list">${list}</ul>`;
+
+    const csvRows = rows.map((row) => [row.name, row.group].join(","));
+    const withHeader = ["name,group", ...csvRows].join("\n");
+    updateDownloadLink("preferenceDownload", withHeader, "preference_groups.csv");
+  } catch (error) {
+    output.textContent = error.message;
+    updateDownloadLink("preferenceDownload", "", "");
+  }
+}
+
 async function handleRosterUpload(event) {
   const [file] = event.target.files;
   if (!file) return;
@@ -272,12 +419,27 @@ async function handlePeerUpload(event) {
   }
 }
 
+async function handlePreferenceUpload(event) {
+  const [file] = event.target.files;
+  if (!file) return;
+  try {
+    const text = await readFileText(file);
+    document.getElementById("preferenceRoster").value = text.trim();
+    document.getElementById("preferenceResult").textContent = "";
+    updateDownloadLink("preferenceDownload", "", "");
+  } catch (error) {
+    document.getElementById("preferenceResult").textContent = error.message;
+  }
+}
+
 document.getElementById("runColdCall").addEventListener("click", handleColdCall);
 document.getElementById("makeGroups").addEventListener("click", handleMakeGroups);
 document.getElementById("makePeerMatches").addEventListener("click", handlePeerMatches);
+document.getElementById("makePreferenceGroups").addEventListener("click", handlePreferenceGroups);
 document.getElementById("coldCallUpload").addEventListener("change", handleRosterUpload);
 document.getElementById("groupUpload").addEventListener("change", handleGroupUpload);
 document.getElementById("peerUpload").addEventListener("change", handlePeerUpload);
+document.getElementById("preferenceUpload").addEventListener("change", handlePreferenceUpload);
 
 function setupTabs() {
   const tabButtons = Array.from(document.querySelectorAll("[role='tab']"));
