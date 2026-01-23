@@ -1,6 +1,6 @@
 # ClassKit 
 
-ClassKit is a lightweight suite of browser-based classroom utilities. Upload a roster, choose your options, and generate reproducible student samples for cold calling, breakout groups, preference-based project teams, and peer-review matches. No installation required.
+ClassKit is a lightweight suite of browser-based classroom utilities. Upload a roster, choose your options, and generate reproducible student samples, breakout groups, preference-based project teams, and peer-review matches. No installation required.
 
 This suite currently includes:
 
