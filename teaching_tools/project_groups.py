@@ -63,39 +63,9 @@ def _parse_preferences(raw: str, *, delimiters: tuple[str, ...]) -> frozenset[st
     if not delimiters:
         return frozenset({raw.strip().casefold()})
 
-    parts = _split_preferences(raw, delimiters)
+    pattern = "|".join(re.escape(delimiter) for delimiter in delimiters)
+    parts = [part.strip() for part in re.split(pattern, raw) if part.strip()]
     return frozenset(part.casefold() for part in parts)
-
-
-def _split_preferences(raw: str, delimiters: tuple[str, ...]) -> List[str]:
-    normalized = raw.strip()
-    if not normalized:
-        return []
-
-    delimiter_list = list(delimiters)
-    has_comma = "," in delimiter_list
-    non_comma_delimiters = [delimiter for delimiter in delimiter_list if delimiter != ","]
-
-    if non_comma_delimiters:
-        pattern = "|".join(re.escape(delimiter) for delimiter in non_comma_delimiters)
-        pieces = [piece.strip() for piece in re.split(pattern, normalized) if piece.strip()]
-    else:
-        pieces = [normalized]
-
-    if not has_comma:
-        return pieces
-
-    refined: List[str] = []
-    for piece in pieces:
-        comma_count = piece.count(",")
-        if comma_count == 0:
-            refined.append(piece)
-            continue
-        if comma_count > 2 or " and " in piece.lower():
-            refined.append(piece)
-            continue
-        refined.extend(part.strip() for part in piece.split(",") if part.strip())
-    return refined
 
 
 def _jaccard_similarity(left: frozenset[str], right: frozenset[str]) -> float:

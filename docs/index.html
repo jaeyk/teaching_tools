@@ -57,6 +57,11 @@
               <p>Upload individual or group names to create a round-robin set of review partners. Each participant reviews one other and is reviewed once.</p>
               <a class="pill__link" href="sample_peer_review_names.csv" download>Download sample roster</a>
             </article>
+            <article class="pill">
+              <h3>Project preferences</h3>
+              <p>Upload names with topic preferences to form teams of students with similar interests. Delimit multiple preferences with commas or a custom separator.</p>
+              <a class="pill__link" href="sample_project_preferences.csv" download>Download sample roster</a>
+            </article>
           </div>
         </div>
       </section>
@@ -157,7 +162,7 @@
               <span>Upload roster (.csv or .txt)</span>
               <input type="file" id="preferenceUpload" accept=".csv,.txt,text/csv,text/plain" />
               <small>
-                Two columns: name, preferences (quote preferences if they include commas). <a href="sample_project_preferences.csv" download>Download a sample roster</a>.
+                Two columns: name, preferences. <a href="sample_project_preferences.csv" download>Download a sample roster</a>.
               </small>
             </label>
             <div class="field-group">
@@ -171,8 +176,8 @@
               </label>
               <label class="field">
                 <span>Preference separators</span>
-                <input type="text" id="preferenceDelimiters" placeholder="," value="," />
-                <small>Enter one or more separators (comma by default). Use spaces to list multiple.</small>
+                <input type="text" id="preferenceDelimiters" placeholder=", /" value=", /" />
+                <small>Enter one or more separators (comma, slash, etc.).</small>
               </label>
               <label class="field">
                 <span>Seed (optional)</span>

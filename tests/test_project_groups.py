@@ -47,22 +47,3 @@ def test_custom_delimiter():
         frozenset({"A", "B"}),
         frozenset({"C"}),
     }
-
-
-def test_commas_inside_topic_are_preserved():
-    roster = {
-        "name": ["Ada", "Bert"],
-        "prefs": [
-            "Health Policy, Bioethics, and Human Rights",
-            "Health Policy, Bioethics, and Human Rights",
-        ],
-    }
-
-    groups = form_preference_groups(
-        roster,
-        preference_column="prefs",
-        team_count=1,
-        preference_delimiters=",",
-    )
-
-    assert groups == [["Ada", "Bert"]]
