@@ -11,12 +11,12 @@
       <header class="hero">
         <div class="hero__text">
           <p class="eyebrow">ClassKit</p>
-          <h1>Run cold calls, breakout groups, and peer matches in your browser.</h1>
+          <h1>Run cold calls, breakout groups, preference groups, and peer matches in your browser.</h1>
           <p class="lede">
             ClassKit is a lightweight suite of browser-based classroom
             utilities. Upload a roster, choose your options, and generate
-            reproducible student samples, breakout groups, and peer-review
-            matches. No installation required.
+            reproducible student samples, breakout groups, preference-based
+            teams, and peer-review matches. No installation required.
           </p>
         </div>
       </header>
@@ -25,6 +25,7 @@
         <button class="tab tab--active" role="tab" aria-selected="true" aria-controls="tab-overview" id="tab-overview-trigger">Overview</button>
         <button class="tab" role="tab" aria-selected="false" aria-controls="tab-cold" id="tab-cold-trigger">Cold calls</button>
         <button class="tab" role="tab" aria-selected="false" aria-controls="tab-breakout" id="tab-breakout-trigger">Breakout groups</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="tab-preferences" id="tab-preferences-trigger">Project preferences</button>
         <button class="tab" role="tab" aria-selected="false" aria-controls="tab-peer" id="tab-peer-trigger">Peer review matches</button>
       </nav>
 
@@ -49,6 +50,11 @@
               <h3>Peer review matches</h3>
               <p>Upload individual or group names to create a round-robin set of review partners. Each participant reviews one other and is reviewed once.</p>
               <a class="pill__link" href="sample_peer_review_names.csv" download>Download sample roster</a>
+            </article>
+            <article class="pill">
+              <h3>Project preferences</h3>
+              <p>Upload names with topic preferences to form teams of students with similar interests. Delimit multiple preferences with commas or a custom separator.</p>
+              <a class="pill__link" href="sample_project_preferences.csv" download>Download sample roster</a>
             </article>
           </div>
         </div>
@@ -135,6 +141,50 @@
         </article>
       </section>
 
+      <section class="tab-panel tab-panel--hidden" id="tab-preferences" role="tabpanel" aria-labelledby="tab-preferences-trigger">
+        <article class="card">
+          <div class="card__header">
+            <h2>Project preference groups</h2>
+            <p>Group students by similarity in their project topic preferences.</p>
+          </div>
+          <div class="card__body">
+            <label class="field">
+              <span>Uploaded roster preview (name, preferences)</span>
+              <textarea id="preferenceRoster" rows="8" placeholder="Upload a CSV or TXT roster to preview it" readonly></textarea>
+            </label>
+            <label class="field">
+              <span>Upload roster (.csv or .txt)</span>
+              <input type="file" id="preferenceUpload" accept=".csv,.txt,text/csv,text/plain" />
+              <small>
+                Two columns: name, preferences (quote preferences if they include commas). <a href="sample_project_preferences.csv" download>Download a sample roster</a>.
+              </small>
+            </label>
+            <div class="field-group">
+              <label class="field">
+                <span>Team count</span>
+                <input type="number" id="preferenceTeamCount" min="1" placeholder="3" />
+              </label>
+              <label class="field">
+                <span>Group size</span>
+                <input type="number" id="preferenceGroupSize" min="1" placeholder="4" />
+              </label>
+              <label class="field">
+                <span>Preference separators</span>
+                <input type="text" id="preferenceDelimiters" placeholder="," value="," />
+                <small>Enter one or more separators (comma by default). Use spaces to list multiple.</small>
+              </label>
+              <label class="field">
+                <span>Seed (optional)</span>
+                <input type="number" id="preferenceSeed" placeholder="11" />
+                <small>Leave blank to randomize tie-breaking each run.</small>
+              </label>
+            </div>
+            <button id="makePreferenceGroups">Create preference groups</button>
+            <a id="preferenceDownload" class="download download--hidden">Download CSV</a>
+            <output id="preferenceResult" aria-live="polite"></output>
+          </div>
+        </article>
+      </section>
       <section class="tab-panel tab-panel--hidden" id="tab-peer" role="tabpanel" aria-labelledby="tab-peer-trigger">
         <article class="card">
           <div class="card__header">
