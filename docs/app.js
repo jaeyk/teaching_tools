@@ -72,40 +72,15 @@ function parsePreferenceRoster(text) {
 
   return dataRows
     .map((line) => {
-      const [name, ...preferencesParts] = parseCsvRow(line);
-      if (!name) {
-        return { name: "", preferences: "" };
+      const separatorIndex = line.indexOf(",");
+      if (separatorIndex === -1) {
+        return { name: line.trim(), preferences: "" };
       }
-      return { name, preferences: preferencesParts.join(",").trim() };
+      const name = line.slice(0, separatorIndex).trim();
+      const preferences = line.slice(separatorIndex + 1).trim();
+      return { name, preferences };
     })
     .filter((entry) => entry.name);
-}
-
-function parseCsvRow(line) {
-  const cells = [];
-  let current = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < line.length; i += 1) {
-    const char = line[i];
-    if (char === '"') {
-      const nextChar = line[i + 1];
-      if (inQuotes && nextChar === '"') {
-        current += '"';
-        i += 1;
-      } else {
-        inQuotes = !inQuotes;
-      }
-    } else if (char === "," && !inQuotes) {
-      cells.push(current.trim());
-      current = "";
-    } else {
-      current += char;
-    }
-  }
-
-  cells.push(current.trim());
-  return cells;
 }
 
 function parsePreferenceDelimiters(raw) {
@@ -120,38 +95,12 @@ function parsePreferenceList(raw, delimiters) {
   if (!raw.trim()) return [];
   if (!delimiters.length) return [raw.trim().toLowerCase()];
 
-  const hasComma = delimiters.includes(",");
-  const nonCommaDelimiters = delimiters.filter((delimiter) => delimiter !== ",");
-  const initialParts = nonCommaDelimiters.length
-    ? raw.split(new RegExp(nonCommaDelimiters.map((delimiter) => delimiter.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")))
-    : [raw];
-
-  const refined = [];
-  initialParts.forEach((part) => {
-    const trimmed = part.trim();
-    if (!trimmed) return;
-    if (!hasComma) {
-      refined.push(trimmed);
-      return;
-    }
-    const commaCount = (trimmed.match(/,/g) || []).length;
-    if (commaCount === 0) {
-      refined.push(trimmed);
-      return;
-    }
-    if (commaCount > 2 || trimmed.toLowerCase().includes(" and ")) {
-      refined.push(trimmed);
-      return;
-    }
-    trimmed.split(",").forEach((piece) => {
-      const pieceTrimmed = piece.trim();
-      if (pieceTrimmed) {
-        refined.push(pieceTrimmed);
-      }
-    });
-  });
-
-  return refined.map((part) => part.toLowerCase());
+  const pattern = delimiters.map((delimiter) => delimiter.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  return raw
+    .split(new RegExp(pattern))
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => part.toLowerCase());
 }
 
 function jaccardSimilarity(left, right) {
